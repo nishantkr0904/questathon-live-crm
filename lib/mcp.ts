@@ -28,7 +28,7 @@ export async function getMcpData(forceSignals = false): Promise<Record<string, u
   if (age < MINUTE) return state.values;
   if (globalCache.crmPending) return globalCache.crmPending;
   globalCache.crmPending = (async () => {
-    // Bootstrap is intentionally spread over three permitted windows. This is more
+    // Bootstrap is intentionally spread over permitted windows. This is more
     // conservative than the API's stated limit and prevents concurrent page loads
     // from burning the player's token allowance.
     if (state.bootstrapStep === 0) {
@@ -40,6 +40,12 @@ export async function getMcpData(forceSignals = false): Promise<Record<string, u
     } else if (state.bootstrapStep === 2) {
       state.values.paperworkB = await rpc("get_all_paperwork", { account: "B" });
       state.bootstrapStep = 3;
+    } else if (state.bootstrapStep === 3) {
+      state.values.newAccountK = await rpc("get_new_account", { account: "K" });
+      state.bootstrapStep = 4;
+    } else if (state.bootstrapStep === 4) {
+      state.values.newAccountH = await rpc("get_new_account", { account: "H" });
+      state.bootstrapStep = 5;
     } else if (age >= MINUTE) {
       state.values.signals = await rpc("get_signals");
     }
