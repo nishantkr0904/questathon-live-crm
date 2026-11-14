@@ -1,33 +1,62 @@
 # Monday Morning CRM
 
-An evidence-led CRM for the Questathon accounts. It presents backed deal values separately from claims, stakeholder power, ranked work, risks, and gaps for both accounts.
+Monday Morning CRM is an evidence-led operating view for the Questathon accounts. It separates verified book value from unbacked upside, maps decision power, ranks next actions, surfaces risk, and makes decision-critical gaps explicit.
 
 ## Run locally
+
+### Prerequisites
+
+- Node.js 20 or later
+- An `AQ_TOKEN` issued by Questathon
+
+### Setup
 
 ```bash
 npm install
 cp .env.example .env.local
-# add AQ_TOKEN to .env.local
+```
+
+Added the token to the newly created `.env.local` file:
+
+```bash
+AQ_TOKEN=questathon_token
+```
+
+Then started the app:
+
+```bash
 npm run dev
 ```
 
-Open `http://localhost:3000`. The token is read only on server routes and is never sent to the browser.
+Opened [http://localhost:3000](http://localhost:3000).
 
-## Deploy
+## Token security
 
-Deploy this repository to Vercel, then set `AQ_TOKEN` in the project Environment Variables for Production and Preview. Redeploy. Do not commit `.env.local`.
+`AQ_TOKEN` is strictly server-side.
 
-## Architecture and rate limiting
+- Stored it only in `.env.local` for local development, or in Vercel Environment Variables for deployed environments.
+- `.env.local` is excluded from Git and must never be committed.
+- The browser calls local application routes only. The bearer token is injected by server-side code in `lib/mcp.ts` and is never sent to client-side JavaScript or exposed in the public repository.
 
-`app/api/dashboard` is the only browser data route. It calls `lib/mcp.ts`, which adds the bearer token on the server. Foundational data is cached in memory after bootstrap; subsequent refreshes poll only `get_signals` after a 60-second guard. `app/api/notes` also observes the same guard before `write_note`.
+## Deployment to Vercel
 
-For production multi-instance deployments, replace the in-memory cache with Redis/Vercel KV to coordinate the one-call-per-minute limit across instances.
+1. Imported the repository into Vercel.
+2. In **Project Settings → Environment Variables**, added `AQ_TOKEN` for the Production and Preview environments.
+3. Deployed the project.
 
-## Source integrity
+## Architecture
 
-The UI never invents source IDs. It renders IDs returned by the MCP source fields and separates unknown or unbacked values from backed value. The mapper is deliberately defensive: missing data becomes an explicit gap.
+The browser reads the dashboard through `app/api/dashboard`. That server route uses `lib/mcp.ts` to call the Questathon MCP API with the server-only bearer token.
 
-## Submission assets
+The data mapper in `lib/derive.ts` is deliberately evidence-led:
 
-- [Thinking document](THINKING.md)
-- [Walkthrough script](WALKTHROUGH.md)
+- Values are shown only with an explicit source ID.
+- Verified book value is kept separate from qualified or unbacked upside.
+- Missing owners, evidence, and approvals are rendered as gaps instead of being inferred.
+- Source badges remain visible beside values, risks, actions, and claims.
+
+## Rate limiting and live updates
+
+Questathon permits one MCP call per minute, including writes. The server-side cache coordinates bootstrap reads and protects subsequent refreshes with a 60-second guard. Once foundational account data is cached, refreshes poll live signals without requiring a code change. The note endpoint observes the same guard before calling `write_note`.
+
+The included cache is process-local for a simple deployment. For a horizontally scaled production system, replace it with a shared store such as Vercel KV or Redis so the one-call-per-minute limit is coordinated across instances.
