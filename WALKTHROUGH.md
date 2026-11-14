@@ -2,7 +2,7 @@
 
 **0:00-0:20.** “This is Monday Morning CRM. It covers Eastern Counties and Aldermoor side by side, and every number is visibly tagged with the source record that supports it.”
 
-**0:20-1:05.** “For Eastern Counties, the first section separates backed value from unbacked claims. Here is a number: I can click or read its source tag, so we know exactly which deal record supports it. The next section maps decision power by deal: decider, payer, user, and blocker, with their recorded stance. This avoids confusing a champion with the person who controls budget.”
+**0:20-1:05.** “For Eastern Counties, the first section separates backed value from unbacked claims. Here is a number: I read its source tag, so we know exactly which deal record supports it. The next section maps decision power by deal: decider, payer, user, and blocker, with their recorded stance. This avoids confusing a champion with the person who controls budget.”
 
 **1:05-1:45.** “The third section is the Monday plan: the top three moves are ranked, have a named owner and due date, and say which deal they advance. The fourth section shows deadlines and stuck work. The fifth makes uncertainty explicit: what is missing, why it matters, and who should answer it. Aldermoor receives the same five answers, so a manager can compare accounts without changing their operating model.”
 
