@@ -2,7 +2,9 @@
 import { useEffect, useState } from "react";
 import { AccountView, Dashboard, Source } from "@/lib/types";
 
-function Cite({ source }: { source: Source }) { return <span className="cite" title={source.label}>Source: {source.id}</span>; }
+function Cite({ source }: { source: Source }) {
+  return <details className="cite"><summary>Source: {source.id}</summary><span className="source-detail">{source.label}</span></details>;
+}
 function Money({ amount, source, currency = "GBP" }: { amount?: number; source: Source; currency?: string }) { return <>{amount === undefined ? "Not backed" : new Intl.NumberFormat("en-GB", { style: "currency", currency, maximumFractionDigits: 0 }).format(amount)} <Cite source={source} /></>; }
 function Account({ account }: { account: AccountView }) {
   const total = account.backed.reduce((sum, deal) => sum + (deal.value ?? 0), 0);
